@@ -33,7 +33,22 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { email } = await req.json();
+    let email;
+    try {
+      const body = await req.json();
+      email = body.email;
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid request body" }),
+        {
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
     if (!email) {
       return new Response(

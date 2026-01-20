@@ -32,7 +32,18 @@ function App() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+
+      if (!responseText) {
+        throw new Error('Empty response from server');
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        throw new Error('Invalid response from server');
+      }
 
       if (!response.ok) {
         const errorData = data as ErrorResponse;
